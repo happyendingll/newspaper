@@ -1,23 +1,26 @@
 <template>
-  <img src="./assets/logo.png">
-  <div>
-    <p>
-      If Element Plus is successfully added to this project, you'll see an
-      <code v-text="'<el-button>'"></code>
-      below
-    </p>
-    <el-button type="primary">el-button</el-button>
-  </div>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<!--  <img src="./assets/logo.png">-->
+<!--  <div>-->
+<!--    <p>-->
+<!--      If Element Plus is successfully added to this project, you'll see an-->
+<!--      <code v-text="'<el-button>'"></code>-->
+<!--      below-->
+<!--    </p>-->
+<!--    <el-button type="primary">el-button</el-button>-->
+<!--  </div>-->
+<!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+  <getData/>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
+import getData from "./components/getData";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    HelloWorld,
+    getData
   }
 }
 </script>
@@ -29,6 +32,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /*margin-top: 60px;*/
 }
 </style>
