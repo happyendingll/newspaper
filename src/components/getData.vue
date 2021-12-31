@@ -1,10 +1,22 @@
 <template>
   <el-row>
-    <el-col :offset="6" :span="12"><div class="grid-content bg-purple">
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="title" label="title" width="180" />
-        <el-table-column prop="biaoqian" label="biaoqian" width="180" />
-<!--        <el-table-column prop="pic" label="pic" />-->
+    <el-col  :span="5">
+        <img src="../assets/logo.png">
+    </el-col>
+    <el-col  :span="10">
+      <div style="margin-top: 15px">
+        <el-input
+            v-model="title"
+            placeholder="输入想搜索的主题"
+            class="input-with-select"
+        >
+          <template #append>
+            <el-button @click="getForm">Go</el-button>
+          </template>
+        </el-input>
+      </div>
+      <el-table :data="tableData" style="width: 100%" @row-click="openurl">
+        <el-table-column prop="title" width="180" />
         <el-table-column align="right">
         <template #default="scope">
           <el-image
@@ -15,8 +27,14 @@
         </template>
         </el-table-column>
       </el-table>
-    </div></el-col>
+    </el-col>
+    <el-col :offset="1" :span="7">
+      <iframe :src=this.drawerUrl style="width: 100%;height: 100%"></iframe>
+    </el-col>
   </el-row>
+<!--  <el-drawer v-model="drawer" :modal="false" :show-close="false" :open-delay="200">-->
+<!--    <iframe :src=this.drawerUrl style="width: 100%;height: 100%"></iframe>-->
+<!--  </el-drawer>-->
 </template>
 
 <script>
@@ -25,9 +43,12 @@ export default {
   name: "getData",
   data() {
     return {
-      url_favorite:'/api?m=App&c=Article&a=getHotMainArticle&uid=1638493790&page=1&pagesize=10',
+      url_favorite:'/api?m=App&c=Article&a=getHotMainArticle&uid=1638493790&page=1&pagesize=50',
       url_java:'/api?m=App&c=index&a=getCategoryArticle&uid=1638493790&fid=8&page=1&pagesize=10',
-
+      url_custom:'/api?m=App&c=Article&a=searchArticle&uid=1638493790&page=1&pagesize=50&title=',
+      drawer:'',
+      title:'',
+      drawerUrl:'http://www.qidianlife.com/Singular/index.php?m=App&c=Article&a=index&id=7267',
       tableData:[]
     }
   },
@@ -36,12 +57,30 @@ export default {
   },
   methods:{
     getForm() {
-      axios.get(this.url_java)
+      axios.get(this.url_custom+this.title)
           .then(res=> {
-            console.log(res.data.data);
-            this.tableData=res.data.data;
+            let tempdata = res.data.data;
+            //  方法1：利用对象访问属性的方法，判断对象中是否存在key
+                let result = [];
+                let obj = {};
+                for(let i =0; i<tempdata.length; i++){
+                     if(!obj[tempdata[i].aid]){
+                          //排除非奇点日报里面的url
+                          if(tempdata[i].url.indexOf("qidianlife")!==-1){
+                            result.push(tempdata[i]);
+                          }
+                          obj[tempdata[i].aid] = true;
+                      }
+                 }
+                console.log(result);
+                this.tableData=result;
           })
           .catch(err=> { console.log(err); });
+    },
+    openurl(row) {
+      console.log(row.url);
+      this.drawer=true
+      this.drawerUrl=row.url;
     }
   }
 }
