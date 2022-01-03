@@ -9,6 +9,7 @@
             v-model="title"
             placeholder="输入想搜索的主题"
             class="input-with-select"
+            @keyup.enter.prevent="searchEnterFun($event)"
         >
           <template #append>
             <el-button @click="getForm">Go</el-button>
@@ -81,7 +82,15 @@ export default {
       console.log(row.url);
       this.drawer=true
       this.drawerUrl=row.url;
-    }
+    },
+    //点击回车，进行搜索
+    searchEnterFun (e){
+      let keyCode = window.event ? e.keyCode : e.which;
+      console.log("回车搜索", keyCode, e);
+      if (keyCode === 13) {
+        this.getForm();
+      }
+    },
   }
 }
 </script>
