@@ -2,6 +2,12 @@
   <el-row>
     <el-col  :span="5">
         <img src="../assets/logo.png">
+      <br/>
+      <el-button type="info" @click="beautifulDate('1')">测试函数</el-button>
+      <br/>
+      <el-button  @click="showCollect">收藏</el-button>
+      <br/>
+      <el-button  @click="showLookLater">稍后再看</el-button>
     </el-col>
     <el-col  :span="10">
       <div style="margin-top: 15px">
@@ -17,7 +23,25 @@
         </el-input>
       </div>
       <el-table :data="tableData" style="width: 100%" @row-click="openurl">
-        <el-table-column prop="title" width="180" />
+        <el-table-column  width="180">
+          <template #default="scope">
+            <p>{{scope.row.title}}</p>
+            <p>{{getLocalTime(scope.row.ctime)}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column align="right">
+          <template #default="scope">
+            <el-button size="small" @click="collect(scope.row)"
+            >收藏</el-button
+            >
+            <el-button
+                size="small"
+                type="danger"
+                @click="lookLater(scope.row)"
+            >稍后再看</el-button
+            >
+          </template>
+        </el-table-column>
         <el-table-column align="right">
         <template #default="scope">
           <el-image
@@ -40,6 +64,7 @@
 </template>
 
 <script>
+import {timestampToTime} from '../utils/dateUtil.js'
 const axios = require('axios');
 export default {
   name: "getData",
@@ -50,13 +75,17 @@ export default {
       url_custom:'/api?m=App&c=Article&a=searchArticle&uid=1638493790&pagesize=20&title=',
       drawer:'',
       title:'',
-      drawerUrl:'http://www.qidianlife.com/Singular/index.php?m=App&c=Article&a=index&id=7267',
+      drawerUrl:'',
       tableData:[],
-      currentPage:1
+      currentPage:1,
+      requestBody:{title:'',pic:'',url:'',status:'',createTime:'',updateTime:''},
+      status1:"1",//收藏
+      status2:"2"//稍后再看
     }
   },
   created() {
     this.getForm('1')
+    // this.getApiList()
   },
   methods:{
     getForm(pageno) {
@@ -77,6 +106,7 @@ export default {
                  }
                 console.log(result);
                 this.tableData=result;
+                this.drawerUrl=this.tableData[0].url
           })
           .catch(err=> { console.log(err); });
     },
@@ -99,8 +129,64 @@ export default {
       this.currentPage = currentPage;        //然后将当前页 = 改变的值
       console.log(this.currentPage)        //点击第几页
       this.getForm(this.currentPage)
+    },
+    getApiList() {
+      axios.post('/article/add',{title:'hello',pic:'woc',url:'goog',status:'1',createTime:new Date().getTime(),updateTime:new Date().getTime()})
+          .then(function (response) {
+            console.log(new Date().getTime())
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    },
+    collect(row) {
+      this.requestBody.title=row.title;
+      this.requestBody.pic=row.pic;
+      this.requestBody.url=row.url;
+      this.requestBody.status=1;
+      this.requestBody.createTime=new Date().getTime();
+      this.requestBody.updateTime=new Date().getTime();
+      axios.post('/article/add',this.requestBody)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    },
+    lookLater(row) {
+      this.requestBody.title=row.title;
+      this.requestBody.pic=row.pic;
+      this.requestBody.url=row.url;
+      this.requestBody.status=2;
+      this.requestBody.createTime=new Date().getTime();
+      this.requestBody.updateTime=new Date().getTime();
+      axios.post('/article/add',this.requestBody)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    },
+    getLocalTime(nS) {
+      return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ');
+},
+    showCollect() {
+      axios.post('/article/list')
+          .then(res=> {
+            console.log(res)
+            this.tableData=res.data.data.list;
+            this.drawerUrl=this.tableData[0].url
+          })
+          .catch(err=> { console.log(err); });
+    },
+    showLookLater() {
+
     }
-  }
+
+}
 }
 </script>
 
