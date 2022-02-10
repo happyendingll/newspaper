@@ -110,7 +110,7 @@ export default {
       this.requestBody.status = 1;
       this.requestBody.createTime = new Date().getTime();
       this.requestBody.updateTime = new Date().getTime();
-      axios.post('/article/add', this.requestBody)
+      axios.post('/article/', this.requestBody)
           .then(res => {
             console.log(res);
             this.showMesg("收藏成功")
@@ -123,9 +123,9 @@ export default {
       return new Date(parseInt(nS) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ');
     },
     showCollect() {
-      axios.post('/article/list')
+      axios.get('/article')
           .then(res => {
-            this.tableData = res.data.data.list;
+            this.tableData = res.data.content;
             this.drawerUrl = this.tableData[0].url
             this.listType = 'collect'
           })
@@ -134,7 +134,7 @@ export default {
           });
     },
     deleteFromDb(id) {
-      axios.post('/article/delete?id=' + id)
+      axios.delete('/article',{data:[id]})
           .then(res => {
             this.showMesg("删除成功")
             this.showCollect()
