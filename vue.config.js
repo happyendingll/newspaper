@@ -13,13 +13,14 @@ module.exports = {
                 }
             },
             '/article': {
-                target: 'http://localhost:8080/article',
+                target: 'http://api.hackboy.tech:168/api/article',
                 ws: false,
                 changeOrigin: true,
                 pathRewrite: {
                     '^/article': ''
                 }
             }
-        }
+        },
+        disableHostCheck: true
     }
 }
