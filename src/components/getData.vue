@@ -110,7 +110,7 @@ export default {
       this.requestBody.status = 1;
       this.requestBody.createTime = new Date().getTime();
       this.requestBody.updateTime = new Date().getTime();
-      axios.post('/article/', this.requestBody)
+      axios.post('/article', this.requestBody)
           .then(res => {
             console.log(res);
             this.showMesg("收藏成功")
